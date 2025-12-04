@@ -1,61 +1,147 @@
-# homebot
+# HomeBot
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+HomeBot is a Quarkus-based chatbot application that integrates with LangChain4j and OpenAI to provide a conversational interface for accessing weather information from Netatmo devices.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Project Overview
 
-## Running the application in dev mode
+HomeBot combines the power of Quarkus, "the Supersonic Subatomic Java Framework," with modern AI capabilities through LangChain4j to create an interactive chatbot experience. The application features:
 
-You can run your application in dev mode that enables live coding using:
+- Real-time chat interface using WebSockets
+- Integration with OpenAI through LangChain4j
+- Weather information retrieval from Netatmo devices
+- Modern web component-based UI
+- Multiple deployment options (JVM, Native, Container)
+
+## Prerequisites
+
+- JDK 21 or later
+- Maven 3.8.1+
+- Docker (for containerization)
+- GraalVM (for native builds, optional)
+
+## Running the Application in Dev Mode
+
+Quarkus includes a development mode that enables live coding. To start the application in dev mode:
 
 ```shell script
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+This will start the application on port 8080. You can access:
+- The application UI at: http://localhost:8080/
+- The Dev UI at: http://localhost:8080/q/dev/ (available in dev mode only)
 
-## Packaging and running the application
+### Development Features
 
-The application can be packaged using:
+In dev mode, you can:
+- Make changes to your code and see them reflected immediately
+- Debug the application with hot reloading
+- Access the Dev UI for various development tools
+
+## Packaging and Running the Application
+
+### JVM Mode
+
+To package the application for JVM mode:
 
 ```shell script
 ./mvnw package
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+This produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory. The application can be run using:
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+```shell script
+java -jar target/quarkus-app/quarkus-run.jar
+```
 
-If you want to build an _über-jar_, execute the following command:
+For an über-jar (single JAR with all dependencies):
 
 ```shell script
 ./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+Then run with:
 
-## Creating a native executable
+```shell script
+java -jar target/*-runner.jar
+```
 
-You can create a native executable using:
+## Containerization
+
+### JVM Mode Container
+
+To build a container image for JVM mode:
+
+1. First package the application:
+   ```shell script
+   ./mvnw package
+   ```
+
+2. Build the Docker image:
+   ```shell script
+   docker build -f src/main/docker/Dockerfile.jvm -t quarkus/homebot-jvm .
+   ```
+
+3. Run the container:
+   ```shell script
+   docker run -i --rm -p 8080:8080 quarkus/homebot-jvm
+   ```
+
+### Native Mode Container
+
+For a smaller, faster container using native compilation:
+
+1. Build the native executable:
+   ```shell script
+   ./mvnw package -Dnative -Dquarkus.native.container-build=true
+   ```
+
+2. Build the Docker image:
+   ```shell script
+   docker build -f src/main/docker/Dockerfile.native -t quarkus/homebot .
+   ```
+
+3. Run the container:
+   ```shell script
+   docker run -i --rm -p 8080:8080 quarkus/homebot
+   ```
+
+## Native Compilation
+
+### Local Native Build
+
+If you have GraalVM installed, you can create a native executable directly:
 
 ```shell script
 ./mvnw package -Dnative
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+Then run the executable:
+
+```shell script
+./target/homebot-1.0.0-SNAPSHOT-runner
+```
+
+### Container-based Native Build
+
+If you don't have GraalVM installed, you can use container-based builds:
 
 ```shell script
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./target/homebot-1.0.0-SNAPSHOT-runner`
+## Configuration
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+The application is configured through `application.properties`. Key configurations include:
+
+- OpenAI API key
+- Netatmo integration settings
+- Timeout settings
+- HTTP port configuration
 
 ## Related Guides
 
-- LangChain4j OpenAI ([guide](https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html)): Provides the basic integration with LangChain4j
-- Quarkus LangChain4j OpenShift AI ([guide](https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html)): Provides integration of Quarkus LangChain4j with the OpenShift AI
-
-## Provided Code
+- [LangChain4j OpenAI Guide](https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html)
+- [Quarkus LangChain4j OpenShift AI Guide](https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html)
+- [Quarkus WebSockets Guide](https://quarkus.io/guides/websockets)
+- [Quarkus Container Images Guide](https://quarkus.io/guides/container-image)
