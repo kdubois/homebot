@@ -1,10 +1,10 @@
 # HomeBot
 
-HomeBot is a Quarkus-based chatbot application that integrates with LangChain4j and OpenAI to provide a conversational interface for accessing weather information from Netatmo devices.
+HomeBot is a Quarkus-based chatbot application that integrates with LangChain4j and OpenAI to provide a conversational interface for accessing weather information from Netatmo devices. The application uses an MCP (Model Context Protocol) client to connect to weather services. A reference implementation of a compatible MCP server for Netatmo is available at [github.com/kdubois/netatmo](https://github.com/kdubois/netatmo).
 
 ## Project Overview
 
-HomeBot combines the power of Quarkus, "the Supersonic Subatomic Java Framework," with modern AI capabilities through LangChain4j to create an interactive chatbot experience. The application features:
+HomeBot combines the power of Quarkus, with modern AI capabilities through LangChain4j to create an interactive chatbot experience. The application features:
 
 - Real-time chat interface using WebSockets
 - Integration with OpenAI through LangChain4j
@@ -134,8 +134,9 @@ If you don't have GraalVM installed, you can use container-based builds:
 
 The application is configured through `application.properties`. Key configurations include:
 
+- LLM provider (defaults to OpenAI, but can be configured for local LLMs like LM Studio - see commented example in application.properties)
 - OpenAI API key
-- Netatmo integration settings
+- MCP server connection for Netatmo weather service
 - Timeout settings
 - HTTP port configuration
 
