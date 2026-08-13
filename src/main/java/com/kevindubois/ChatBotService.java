@@ -5,14 +5,16 @@ import io.quarkiverse.langchain4j.RegisterAiService;
 import io.quarkiverse.langchain4j.mcp.runtime.McpToolBox;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.time.LocalDate;
 
 @ApplicationScoped
 @RegisterAiService
 public interface ChatBotService {
     @McpToolBox({"netatmo"})
     @SystemMessage("You are a weather station bot. You have access to an " +
-           "MCP Server that retrieves information from a weather station " +
+           "MCP Server that retrieves information from a weather station. " +
            "Make sure to ALWAYS use date formats like YYYY-MM-DD" +
-           " to interact with the MCP server ")
-    String chat(String userMessage);
+           " to interact with the MCP server." +
+           " Today's date is {currentDate}.")
+    Multi<String> chat(String userMessage, LocalDate currentDate);
 }

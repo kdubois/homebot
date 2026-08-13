@@ -4,6 +4,7 @@ import io.quarkus.websockets.next.OnOpen;
 import io.quarkus.websockets.next.OnTextMessage;
 import io.quarkus.websockets.next.WebSocket;
 import io.smallrye.mutiny.Multi;
+import java.time.LocalDate;
 
 @WebSocket(path = "/chatbot")
 public class ChatBotWebSocket {
@@ -20,7 +21,7 @@ public class ChatBotWebSocket {
     }
 
     @OnTextMessage
-    public String onTextMessage(String message) {
-        return chatBotService.chat(message);
+    public Multi<String> onTextMessage(String message) {
+        return chatBotService.chat(message, LocalDate.now());
     }
 }
