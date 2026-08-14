@@ -11,12 +11,11 @@
         import 'icons/font-awesome.js';
         import 'components/chatbot-title.js';
         import 'components/chatbot-chat.js';
-        import 'wc-chatbot';
     </script>
 
     <link rel="stylesheet" href="fonts/red-hat-font.min.css">
 
-    <title>Quarkus Chatbot</title>
+    <title>HomeBot</title>
 
     <style>
         :root {
@@ -32,40 +31,29 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            align-items: center;
+            padding-top: 1rem;
             color: var(--lumo-body-text-color);
             background: var(--main-bg-color);
         }
 
-        chat-bot {
-            --chatbot-avatar-bg-color: rgba(237, 98, 128);
-            --chatbot-avatar-margin: 10%;
-            --chatbot-header-bg-color: rgba(237, 98, 128);
-            --chatbot-header-title-color: #FFFFFF;
-            --chatbot-body-bg-color: var(--main-bg-color);
-            --chatbot-send-button-color: rgba(237, 98, 128);
-            --chatbot-container-width: 500px;
-            --chatbot-container-height: 600px;
+        chatbot-title {
+            width: 100%;
+            flex-shrink: 0;
         }
 
-         chat-bot::part(chat-bubble) {
-             --chat-bubble-avatar-color: rgba(237, 98, 128);
-             --chat-bubble-color: rgba(203, 232, 237, 0.71);
-             --chat-bubble-right-color: rgb(157, 238, 244);
-             --chat-bubble-font-color: #333;
-             --chat-bubble-font-right-color: #333;
-             --chat-bubble-delay: 0.2s;
-         }
-
-        .middle {
-            margin-top: 2em;
-            overflow: hidden;
-            width: 50%;
-            margin-left: auto;
-            margin-right: auto;
+        .chat-area {
+            flex: 1;
+            width: 560px;
+            max-width: 90%;
+            margin: 0.75rem auto 1rem;
+            min-height: 0;
             display: flex;
         }
 
+        chatbot-chat {
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -73,10 +61,8 @@
 
 <chatbot-title></chatbot-title>
 
-<div class="middle">
-    <chatbot-chat>
-        <chat-bot></chat-bot>
-    </chatbot-chat>
+<div class="chat-area">
+    <chatbot-chat></chatbot-chat>
 </div>
 
 </body>

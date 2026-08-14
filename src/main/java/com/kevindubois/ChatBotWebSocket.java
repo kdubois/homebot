@@ -16,12 +16,15 @@ public class ChatBotWebSocket {
     }
 
     @OnOpen
-    public String onOpen() {
-        return "How can I help you today?";
+    public void onOpen() {
     }
 
     @OnTextMessage
     public Multi<String> onTextMessage(String message) {
-        return chatBotService.chat(message, LocalDate.now());
+        return chatBotService.chat(message, LocalDate.now())
+            .onFailure().recoverWithItem(error ->
+                "Sorry, I encountered an error processing your request: " +
+                (error.getMessage() != null ? error.getMessage() : "Unknown error") +
+                ". Please try again with a simpler question or shorter date range.");
     }
 }

@@ -1,148 +1,60 @@
 # HomeBot
 
-HomeBot is a Quarkus-based chatbot application that integrates with LangChain4j and OpenAI to provide a conversational interface for accessing weather information from Netatmo devices. The application uses an MCP (Model Context Protocol) client to connect to weather services. A reference implementation of a compatible MCP server for Netatmo is available at [github.com/kdubois/netatmo](https://github.com/kdubois/netatmo).
+Quarkus LangChain4j chatbot that uses MCP tools from the Netatmo weather station server. Streams LLM responses over WebSocket.
 
-## Project Overview
+## Features
 
-HomeBot combines the power of Quarkus, with modern AI capabilities through LangChain4j to create an interactive chatbot experience. The application features:
+- MCP client connecting to public (`/mcp`) and admin (`/admin/mcp`) endpoints
+- OIDC client credentials for authenticated admin tool access (Keycloak)
+- Streaming chat via WebSocket + Lit web components
+- Prompt suggestion buttons for common queries
+- Graceful error handling (`@HandleToolExecutionError` + WebSocket recovery)
 
-- Real-time chat interface using WebSockets
-- Integration with OpenAI through LangChain4j
-- Weather information retrieval from Netatmo devices
-- Modern web component-based UI
-- Multiple deployment options (JVM, Native, Container)
+## Running
 
-## Prerequisites
+Requires the netatmo MCP server running on port 8091.
 
-- JDK 21 or later
-- Maven 3.8.1+
-- Docker (for containerization)
-- GraalVM (for native builds, optional)
-
-## Running the Application in Dev Mode
-
-Quarkus includes a development mode that enables live coding. To start the application in dev mode:
-
-```shell script
-./mvnw quarkus:dev
+```bash
+./mvnw quarkus:dev    # Port 8080, Keycloak Dev Services auto-discovered
 ```
 
-This will start the application on port 8080. You can access:
-- The application UI at: http://localhost:8080/
-- The Dev UI at: http://localhost:8080/q/dev/ (available in dev mode only)
-
-### Development Features
-
-In dev mode, you can:
-- Make changes to your code and see them reflected immediately
-- Debug the application with hot reloading
-- Access the Dev UI for various development tools
-
-## Packaging and Running the Application
-
-### JVM Mode
-
-To package the application for JVM mode:
-
-```shell script
-./mvnw package
-```
-
-This produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory. The application can be run using:
-
-```shell script
-java -jar target/quarkus-app/quarkus-run.jar
-```
-
-For an über-jar (single JAR with all dependencies):
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-Then run with:
-
-```shell script
-java -jar target/*-runner.jar
-```
-
-## Containerization
-
-### JVM Mode Container
-
-To build a container image for JVM mode:
-
-1. First package the application:
-   ```shell script
-   ./mvnw package
-   ```
-
-2. Build the Docker image:
-   ```shell script
-   docker build -f src/main/docker/Dockerfile.jvm -t quarkus/homebot-jvm .
-   ```
-
-3. Run the container:
-   ```shell script
-   docker run -i --rm -p 8080:8080 quarkus/homebot-jvm
-   ```
-
-### Native Mode Container
-
-For a smaller, faster container using native compilation:
-
-1. Build the native executable:
-   ```shell script
-   ./mvnw package -Dnative -Dquarkus.native.container-build=true
-   ```
-
-2. Build the Docker image:
-   ```shell script
-   docker build -f src/main/docker/Dockerfile.native -t quarkus/homebot .
-   ```
-
-3. Run the container:
-   ```shell script
-   docker run -i --rm -p 8080:8080 quarkus/homebot
-   ```
-
-## Native Compilation
-
-### Local Native Build
-
-If you have GraalVM installed, you can create a native executable directly:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Then run the executable:
-
-```shell script
-./target/homebot-1.0.0-SNAPSHOT-runner
-```
-
-### Container-based Native Build
-
-If you don't have GraalVM installed, you can use container-based builds:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
+Access the UI at http://localhost:8080/
 
 ## Configuration
 
-The application is configured through `application.properties`. Key configurations include:
+Key settings in `application.properties`:
 
-- LLM provider (defaults to OpenAI, but can be configured for local LLMs like LM Studio - see commented example in application.properties)
-- OpenAI API key
-- MCP server connection for Netatmo weather service
-- Timeout settings
-- HTTP port configuration
+```properties
+# LLM provider (OpenAI-compatible)
+quarkus.langchain4j.openai.base-url=http://localhost:1234/v1
+quarkus.langchain4j.openai.chat-model.model-name=ibm/granite-4-h-tiny
 
-## Related Guides
+# MCP clients
+quarkus.langchain4j.mcp.netatmo.url=http://localhost:8091/mcp
+quarkus.langchain4j.mcp.netatmo-admin.url=http://localhost:8091/admin/mcp
+```
 
-- [LangChain4j OpenAI Guide](https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html)
-- [Quarkus LangChain4j OpenShift AI Guide](https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html)
-- [Quarkus WebSockets Guide](https://quarkus.io/guides/websockets)
-- [Quarkus Container Images Guide](https://quarkus.io/guides/container-image)
+The OIDC client for admin auth is auto-configured by Keycloak Dev Services (shared container from netatmo app). Uses `alice/alice` (admin role) via password grant.
+
+## Architecture
+
+| Component | Role |
+|-----------|------|
+| `ChatBotService` | AI Service with `@McpToolBox`, system prompt, error handler |
+| `ChatBotWebSocket` | `/chatbot` WebSocket endpoint, streams responses |
+| `AdminMcpAuthProvider` | `McpClientAuthProvider` for admin MCP client |
+| `chatbot-title.js` | Suggestion buttons (Lit component) |
+| `chatbot-chat.js` | WebSocket + chat widget bridge (Lit component) |
+
+## Packaging
+
+```bash
+./mvnw package
+java -jar target/quarkus-app/quarkus-run.jar
+
+# Native
+./mvnw package -Dnative -Dquarkus.native.container-build=true
+
+# Container
+docker build -f src/main/docker/Dockerfile.jvm -t quarkus/homebot-jvm .
+```
