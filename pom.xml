@@ -86,7 +86,7 @@
         <dependency>
             <groupId>org.mvnpm</groupId>
             <artifactId>marked</artifactId>
-            <version>17.0.5</version>
+            <version>18.0.13</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
