@@ -8,7 +8,7 @@
     <script src="/_importmap/dynamic-importmap.js"></script>
 
     <script type="module">
-        import 'icons/font-awesome.js';
+        import 'components/home-dashboard.js';
         import 'components/chatbot-title.js';
         import 'components/chatbot-chat.js';
     </script>
@@ -32,15 +32,75 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 1rem;
             color: var(--lumo-body-text-color);
             background: var(--main-bg-color);
         }
 
-        chatbot-title {
+        .topbar {
             width: 100%;
+            background: var(--main-bg-color);
+            padding: 0.6rem 1rem 0.4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             flex-shrink: 0;
         }
+
+        .topbar h2 {
+            font-family: "Red Hat Mono", monospace;
+            font-size: 30px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin: 0.1em 0 0.15em;
+            color: var(--main-highlight-text-color);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .tab {
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.45rem 1.1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(237, 98, 128, 0.3);
+            background: white;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover { background: rgba(237, 98, 128, 0.08); }
+
+        .tab.active {
+            background: var(--main-highlight-text-color);
+            border-color: var(--main-highlight-text-color);
+            color: white;
+        }
+
+        .view {
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            display: none;
+        }
+
+        .view.active { display: block; }
+
+        #view-dashboard { padding-top: 0.25rem; }
+        home-dashboard { height: 100%; }
+
+        #view-chat {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        #view-chat.active { display: flex; }
+
+        chatbot-title { width: 100%; flex-shrink: 0; }
 
         .chat-area {
             flex: 1;
@@ -51,19 +111,41 @@
             display: flex;
         }
 
-        chatbot-chat {
-            width: 100%;
-        }
+        chatbot-chat { width: 100%; }
     </style>
 </head>
 
 <body>
 
-<chatbot-title></chatbot-title>
-
-<div class="chat-area">
-    <chatbot-chat></chatbot-chat>
+<div class="topbar">
+    <h2>HomeBot</h2>
+    <div class="tabs">
+        <button class="tab active" data-view="view-dashboard">Dashboard</button>
+        <button class="tab" data-view="view-chat">AI Chat</button>
+    </div>
 </div>
+
+<div id="view-dashboard" class="view active">
+    <home-dashboard></home-dashboard>
+</div>
+
+<div id="view-chat" class="view">
+    <chatbot-title></chatbot-title>
+    <div class="chat-area">
+        <chatbot-chat></chatbot-chat>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(tab.dataset.view).classList.add('active');
+        });
+    });
+</script>
 
 </body>
 
