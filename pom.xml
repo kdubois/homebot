@@ -92,7 +92,7 @@
         <dependency>
             <groupId>org.mvnpm</groupId>
             <artifactId>dompurify</artifactId>
-            <version>3.4.11</version>
+            <version>3.4.15</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
