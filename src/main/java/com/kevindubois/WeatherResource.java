@@ -21,6 +21,8 @@ public class WeatherResource {
     @Produces(MediaType.SERVER_SENT_EVENTS)
     @RestStreamElementType(MediaType.TEXT_PLAIN)
     public Multi<String> hello() {
-        return chatBotService.chat("What is the weather like right now?", LocalDate.now());
+        return chatBotService.chat(
+            "What is the weather like right now?", LocalDate.now(),
+            "The station admin tools are LOCKED (the user has not signed in as admin).");
     }
 }
